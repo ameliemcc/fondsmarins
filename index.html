@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Submerged — Smithsonian Coral Collection</title>
+
+  <!-- A-Frame 1.5 — https://aframe.io -->
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
+  <style>
+    body { margin: 0; background: #000; overflow: hidden; }
+
+    #hud {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      pointer-events: none;
+    }
+    #load-btn {
+      pointer-events: all;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #a8d5b5;
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.4rem;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #load-btn:hover { background: rgba(255,255,255,0.13); }
+    #status {
+      font-family: 'Courier New', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: rgba(180,220,190,0.35);
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+<div id="hud">
+  <button id="load-btn" onclick="loadAudio()">⊕ Load Audio Track</button>
+  <span id="status">no track loaded — demo mode</span>
+</div>
+
+<a-scene
+  background="color: #060e0a"
+  fog="type: exponential; color: #0a1a10; density: 0.055"
+  renderer="antialias: true; colorManagement: true"
+  vr-mode-ui="enabled: true"
+>
+
+  <!-- ═══════════════════════════════════════
+       CAMERA RIG — gentle underwater drift
+  ════════════════════════════════════════ -->
+  <a-entity id="rig" position="0 1.6 0" camera-drift>
+    <a-camera
+      look-controls="pointerLockEnabled: true"
+      wasd-controls="acceleration: 12"
+      near="0.1" far="30"
+    >
+      <a-cursor color="#a8d5b5" opacity="0.4" scale="0.35 0.35 0.35"></a-cursor>
+    </a-camera>
+  </a-entity>
+
+  <!-- ═══════════════════════════════════════
+       LIGHTING — murky underwater palette
+  ════════════════════════════════════════ -->
+  <!-- Ambient: deep dark green -->
+  <a-light type="ambient" color="#0d2416" intensity="1.2"></a-light>
+
+  <!-- Primary fill: cold teal from above -->
+  <a-light id="light-main"
+    type="point" color="#1a6b4a" intensity="1.6"
+    distance="14" position="0 5 -2">
+  </a-light>
+
+  <!-- Secondary: murky green from the side -->
+  <a-light id="light-side"
+    type="point" color="#0e4a28" intensity="1.0"
+    distance="10" position="-4 2 0">
+  </a-light>
+
+  <!-- Bass pulse light — centre of room -->
+  <a-light id="light-bass"
+    type="point" color="#2dcc7a" intensity="0.8"
+    distance="8" position="0 2 -4">
+  </a-light>
+
+  <!-- Treble shimmer — from behind corals -->
+  <a-light id="light-treble"
+    type="point" color="#80ffb0" intensity="0.4"
+    distance="6" position="0 3 -7">
+  </a-light>
+
+  <!-- ═══════════════════════════════════════
+       ROOM GEOMETRY — bare flooded room
+       Built from A-Frame primitives.
+       Walls slightly darker than fog colour.
+  ════════════════════════════════════════ -->
+
+  <!-- Floor — dark, silt-covered -->
+  <a-plane id="floor"
+    position="0 0 0" rotation="-90 0 0"
+    width="10" height="14"
+    color="#060f08" metalness="0.1" roughness="1.0">
+  </a-plane>
+
+  <!-- Ceiling 
+  <a-plane
+    position="0 4 0" rotation="90 0 0"
+    width="10" height="14"
+    color="#071009" metalness="0.0" roughness="1.0">
+  </a-plane> -->
+  <a-plane
+   id="water"
+    position="0 4 0" rotation="90 0 0"
+    width="10" height="14"
+    color="#071009" metalness="0.9" roughness="1.0">
+  </a-plane> 
+     
+
+  <!-- Back wall -->
+  <a-plane
+    position="0 2 -7" rotation="0 0 0"
+    width="10" height="4"
+    color="#081209" roughness="1.0">
+  </a-plane>
+
+  <!-- Left wall -->
+  <a-plane
+    position="-5 2 0" rotation="0 90 0"
+    width="14" height="4"
+    color="#071009" roughness="1.0">
+  </a-plane>
+
+  <!-- Right wall -->
+  <a-plane
+    position="5 2 0" rotation="0 -90 0"
+    width="14" height="4"
+    color="#071009" roughness="1.0">
+  </a-plane>
+
+  <!-- ═══════════════════════════════════════
+       CAUSTIC LIGHT PANELS
+       Animated planes on walls/floor simulating
+       caustic water light patterns.
+       Semi-transparent, slowly shifting.
+  ════════════════════════════════════════ -->
+
+  <!-- Caustic on back wall — large -->
+  <a-plane id="caustic-back"
+    position="0 2 -6.9" rotation="0 0 0"
+    width="9" height="3.8"
+    material="color: #2dcc7a; opacity: 0.04; transparent: true;
+      side: front; shader: flat">
+    <a-animation attribute="material.opacity"
+      from="0.02" to="0.07" dur="2800"
+      direction="alternate" repeat="indefinite" easing="easeInOutSine">
+    </a-animation>
+  </a-plane>
+
+  <!-- Caustic on left wall -->
+  <a-plane id="caustic-left"
+    position="-4.9 2 -2" rotation="0 90 0"
+    width="8" height="3.8"
+    material="color: #1de9b6; opacity: 0.03; transparent: true;
+      side: front; shader: flat">
+    <a-animation attribute="material.opacity"
+      from="0.015" to="0.06" dur="3500"
+      direction="alternate" repeat="indefinite" easing="easeInOutSine">
+    </a-animation>
+  </a-plane>
+
+  <!-- Caustic on right wall -->
+  <a-plane id="caustic-right"
+    position="4.9 2 -3" rotation="0 -90 0"
+    width="8" height="3.8"
+    material="color: #26a96c; opacity: 0.025; transparent: true;
+      side: front; shader: flat">
+    <a-animation attribute="material.opacity"
+      from="0.01" to="0.055" dur="4200"
+      direction="alternate" repeat="indefinite" easing="easeInOutSine">
+    </a-animation>
+  </a-plane>
+
+  <!-- Caustic on floor — ripple bands -->
+  <a-plane id="caustic-floor"
+    position="0 0.01 -3" rotation="-90 0 0"
+    width="9" height="10"
+    material="color: #3dffaa; opacity: 0.03; transparent: true;
+      side: front; shader: flat">
+    <a-animation attribute="rotation"
+      from="-90 0 0" to="-90 5 0" dur="6000"
+      direction="alternate" repeat="indefinite" easing="easeInOutSine">
+    </a-animation>
+    <a-animation attribute="material.opacity"
+      from="0.01" to="0.05" dur="3200"
+      direction="alternate" repeat="indefinite" easing="easeInOutSine">
+    </a-animation>
+  </a-plane>
+
+  <!-- ═══════════════════════════════════════
+       FURNITURE — sparse, bare, waterlogged
+       Simple A-Frame primitives suggesting
+       a study or collection room.
+  ════════════════════════════════════════ -->
+
+  <!-- Long low shelf / table — back left -->
+  <a-box position="-2.5 0.4 -5.5"
+    width="3" height="0.08" depth="0.7"
+    color="#0f1e12" roughness="1.0" metalness="0.0">
+  </a-box>
+  <!-- Shelf legs -->
+  <a-box position="-1.2 0.2 -5.5" width="0.06" height="0.4" depth="0.06" color="#0c180f"></a-box>
+  <a-box position="-3.8 0.2 -5.5" width="0.06" height="0.4" depth="0.06" color="#0c180f"></a-box>
+
+  <!-- Second shelf above it -->
+  <a-box position="-2.5 1.1 -5.5"
+    width="3" height="0.06" depth="0.55"
+    color="#0f1e12" roughness="1.0">
+  </a-box>
+
+  <!-- Desk — right side -->
+  <a-box position="2.8 0.75 -4.5"
+    width="1.8" height="0.07" depth="0.9"
+    color="#0d1a10" roughness="1.0">
+  </a-box>
+  <a-box position="2.0 0.35 -4.1" width="0.06" height="0.7" depth="0.06" color="#0b160e"></a-box>
+  <a-box position="3.6 0.35 -4.1" width="0.06" height="0.7" depth="0.06" color="#0b160e"></a-box>
+  <a-box position="2.0 0.35 -4.9" width="0.06" height="0.7" depth="0.06" color="#0b160e"></a-box>
+  <a-box position="3.6 0.35 -4.9" width="0.06" height="0.7" depth="0.06" color="#0b160e"></a-box>
+
+  <!-- Overturned chair suggestion — left foreground -->
+  <a-box position="-3.0 0.2 -2.5"
+    width="0.45" height="0.06" depth="0.45"
+    color="#0c180f" roughness="1.0" rotation="0 20 15">
+  </a-box>
+  <a-box position="-3.0 0.55 -2.3"
+    width="0.45" height="0.5" depth="0.05"
+    color="#0c180f" roughness="1.0" rotation="0 20 15">
+  </a-box>
+
+  <!-- A few indistinct boxes/crates on shelf -->
+  <a-box position="-1.8 0.55 -5.5" width="0.25" height="0.22" depth="0.25" color="#111f14" roughness="1.0"></a-box>
+  <a-box position="-2.4 0.55 -5.5" width="0.18" height="0.28" depth="0.2"  color="#0e1c11" roughness="1.0"></a-box>
+  <a-box position="-3.2 0.55 -5.5" width="0.3"  height="0.18" depth="0.28" color="#121f15" roughness="1.0"></a-box>
+
+  <!-- ═══════════════════════════════════════
+       CORAL SPECIMENS
+       3 Smithsonian scans, suspended mid-water.
+       Audio-reactor component drives their
+       glow, scale, and rotation.
+
+       Source: The Smithsonian Institution
+       License: CC0 Public Domain
+       https://www.si.edu/Termsofuse
+
+       Pocillopora grandis (Dana, 1846) — USNM 700
+       Collected: Fiji, South Pacific, 1838–1842
+       https://sketchfab.com/3d-models/pocillopora-grandis-ec6c9d4d94ba4d4ea68e34bc99ce5131
+
+       Diploria labyrinthiformis (Linnaeus, 1758) — USNM 74947
+       Collected: Carrie Bow Cay, Belize, 10 Aug 1985
+       Collector: Dr. Stephen D. Cairns
+       https://sketchfab.com/3d-models/diploria-labyrinthiformis-cbbf64f211f84a7cb62887fec11f54fe
+
+       Stylaster sanguineus (Valenciennes in Milne Edwards & Haime, 1850) — USNM 76600
+       Collected: Kwajalein Atoll, Marshall Islands, North Pacific
+       https://sketchfab.com/3d-models/stylaster-sanguineus-detail-view-2aa2135dda844cc399028becc7a7c825
+  ════════════════════════════════════════ -->
+
+  <!-- Pocillopora grandis — bushy, centre -->
+  <a-entity id="coral-pocillopora"
+    data-band="bass"
+    position="0 1.8 -4.5"
+    coral-float="speed: 0.4; amplitude: 0.12; phase: 0">
+    <a-gltf-model
+      src="assets/corals/pocillopora.glb"
+      scale="4 4 4"
+      rotation="0 0 0">
+    </a-gltf-model>
+    <!-- Bioluminescent glow orb — inner -->
+    <a-sphere id="glow-pocillopora"
+      radius="0.28" color="#2dcc7a" opacity="0.12"
+      material="shader: flat; color: #2dcc7a; opacity: 0.12; transparent: true">
+    </a-sphere>
+    <!-- Outer halo -->
+    <a-sphere radius="0.55" color="#1de9b6" opacity="0.05"
+      material="shader: flat; color: #1de9b6; opacity: 0.05; transparent: false">
+    </a-sphere>
+  </a-entity>
+
+  <!-- Diploria labyrinthiformis — brain coral, left -->
+  <a-entity id="coral-diploria"
+    data-band="mid"
+    position="-2.2 1.5 -5.5"
+    coral-float="speed: 0.3; amplitude: 0.09; phase: 1.8">
+    <a-gltf-model
+      src="assets/corals/diploria.glb"
+      scale="6 6 6 "
+      rotation="15 30 0">
+    </a-gltf-model>
+    <a-sphere id="glow-diploria"
+      radius="0.32" color="#26c97e" opacity="0.10"
+      material="shader: flat; color: #26c97e; opacity: 0.10; transparent: true">
+    </a-sphere>
+    <a-sphere radius="0.60" color="#80ffb0" opacity="0.04"
+      material="shader: flat; color: #80ffb0; opacity: 0.04; transparent: true">
+    </a-sphere>
+  </a-entity>
+
+  <!-- Stylaster sanguineus — lace coral, right + higher -->
+  <a-entity id="coral-stylaster"
+    data-band="treble"
+    position="2.5 2.2 -5.0"
+    coral-float="speed: 0.55; amplitude: 0.15; phase: 3.5">
+    <a-gltf-model
+      src="assets/corals/stylaster.glb"
+      scale="50 50 50 "
+      rotation="-10 -20 5">
+    </a-gltf-model>
+    <a-sphere id="glow-stylaster"
+      radius="0.22" color="#3dffaa" opacity="0.14"
+      material="shader: flat; color: #3dffaa; opacity: 0.14; transparent: true">
+    </a-sphere>
+    <a-sphere radius="0.45" color="#a0ffe0" opacity="0.05"
+      material="shader: flat; color: #a0ffe0; opacity: 0.05; transparent: true">
+    </a-sphere>
+  </a-entity>
+
+    <a-entity id="coral-s3" class="coral-treble"
+    position="-6.0 0 -9"
+    coral-float="speed:0.45; amplitude:0.20; phase:5.5">
+    <a-gltf-model src="assets/corals/stylaster.glb"
+      scale="5.0 5.0 5.0" rotation="8 200 4">
+    </a-gltf-model>
+    <a-sphere class="glow-treble" radius="1.3" color="#3dffaa" opacity="0.11"
+      material="shader:flat; color:#3dffaa; opacity:0.11; transparent:true">
+    </a-sphere>
+    <a-sphere radius="2.2" color="#a0ffe0" opacity="0.04"
+      material="shader:flat; color:#a0ffe0; opacity:0.04; transparent:true">
+    </a-sphere>
+  </a-entity>
+
+  <!-- ═══════════════════════════════════════
+       SEDIMENT PARTICLES
+       Small semi-transparent spheres drifting
+       slowly downward, looping back to top.
+       Driven by the sediment-drift component.
+  ════════════════════════════════════════ -->
+  <a-entity id="sediment">
+    <!-- 30 sediment motes, varied positions and sizes -->
+    <a-sphere class="mote" radius="0.012" color="#1a3d22" opacity="0.55" position=" 0.8  3.8 -3.5" material="shader:flat;color:#1a3d22;opacity:0.55;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.009" color="#1c4225" opacity="0.45" position="-1.5  3.2 -5.0" material="shader:flat;color:#1c4225;opacity:0.45;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.015" color="#163318" opacity="0.50" position=" 2.1  3.6 -4.2" material="shader:flat;color:#163318;opacity:0.50;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.008" color="#1e4528" opacity="0.40" position="-0.5  3.9 -6.0" material="shader:flat;color:#1e4528;opacity:0.40;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.011" color="#182e1a" opacity="0.60" position=" 1.3  2.8 -3.0" material="shader:flat;color:#182e1a;opacity:0.60;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.014" color="#1a3820" opacity="0.50" position="-2.8  3.5 -4.5" material="shader:flat;color:#1a3820;opacity:0.50;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.010" color="#163020" opacity="0.45" position=" 3.0  3.1 -5.5" material="shader:flat;color:#163020;opacity:0.45;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.013" color="#1c4020" opacity="0.55" position="-1.0  3.7 -3.8" material="shader:flat;color:#1c4020;opacity:0.55;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.009" color="#183520" opacity="0.40" position=" 0.2  2.5 -6.5" material="shader:flat;color:#183520;opacity:0.40;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.016" color="#1a3a1e" opacity="0.50" position="-3.5  3.3 -5.0" material="shader:flat;color:#1a3a1e;opacity:0.50;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.008" color="#1e4520" opacity="0.45" position=" 4.0  3.8 -4.0" material="shader:flat;color:#1e4520;opacity:0.45;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.012" color="#163018" opacity="0.55" position="-0.8  2.9 -4.8" material="shader:flat;color:#163018;opacity:0.55;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.010" color="#1c3e22" opacity="0.40" position=" 1.8  3.4 -6.2" material="shader:flat;color:#1c3e22;opacity:0.40;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.014" color="#183a20" opacity="0.50" position="-2.0  3.0 -3.2" material="shader:flat;color:#183a20;opacity:0.50;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.009" color="#1a3522" opacity="0.45" position=" 0.5  3.6 -5.8" material="shader:flat;color:#1a3522;opacity:0.45;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.013" color="#164020" opacity="0.55" position="-3.0  2.7 -6.0" material="shader:flat;color:#164020;opacity:0.55;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.011" color="#1c3820" opacity="0.40" position=" 2.5  3.9 -3.5" material="shader:flat;color:#1c3820;opacity:0.40;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.015" color="#183020" opacity="0.50" position="-1.8  2.6 -5.5" material="shader:flat;color:#183020;opacity:0.50;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.009" color="#1e4225" opacity="0.45" position=" 3.5  3.2 -6.5" material="shader:flat;color:#1e4225;opacity:0.45;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.012" color="#163522" opacity="0.55" position="-4.0  3.7 -4.2" material="shader:flat;color:#163522;opacity:0.55;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.010" color="#1a4020" opacity="0.40" position=" 1.0  2.4 -4.0" material="shader:flat;color:#1a4020;opacity:0.40;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.014" color="#183820" opacity="0.50" position="-0.3  3.5 -6.8" material="shader:flat;color:#183820;opacity:0.50;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.008" color="#1c3a22" opacity="0.45" position=" 4.2  2.8 -5.2" material="shader:flat;color:#1c3a22;opacity:0.45;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.013" color="#163020" opacity="0.55" position="-2.5  3.1 -3.5" material="shader:flat;color:#163020;opacity:0.55;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.011" color="#1e3e22" opacity="0.40" position=" 0.9  3.8 -5.5" material="shader:flat;color:#1e3e22;opacity:0.40;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.015" color="#183522" opacity="0.50" position="-1.2  2.5 -4.0" material="shader:flat;color:#183522;opacity:0.50;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.009" color="#164025" opacity="0.45" position=" 2.8  3.4 -3.8" material="shader:flat;color:#164025;opacity:0.45;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.012" color="#1a3820" opacity="0.55" position="-3.8  2.9 -5.8" material="shader:flat;color:#1a3820;opacity:0.55;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.010" color="#1c4022" opacity="0.40" position=" 1.5  3.6 -6.8" material="shader:flat;color:#1c4022;opacity:0.40;transparent:true"></a-sphere>
+    <a-sphere class="mote" radius="0.014" color="#183020" opacity="0.50" position="-0.7  3.0 -3.2" material="shader:flat;color:#183020;opacity:0.50;transparent:true"></a-sphere>
+  </a-entity>
+
+</a-scene>
+
+<!-- ═══════════════════════════════════════
+     JAVASCRIPT
+     Web Audio API + A-Frame components
+     Audio visualisation technique adapted from:
+     https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Visualizations_with_Web_Audio_API
+════════════════════════════════════════ -->
+
+<script>
+AFRAME.registerComponent('water-animation', {
+  schema: {
+    frameCount:  { type: 'int',    default: 120 },
+    fps:         { type: 'int',    default: 24 },
+    path:        { type: 'string', default: 'assets/textures/water/' },
+    repeat:      { type: 'vec2',   default: { x: 2, y: 2 } },
+    normalScale: { type: 'number', default: 2.0 },
+    color:       { type: 'color',  default: '#1a3a4a' }
+  },
+
+  init() {
+    const size = 1024;
+
+    this.canvas = document.createElement('canvas');
+    this.canvas.width = this.canvas.height = size;
+    this.ctx = this.canvas.getContext('2d');
+
+    this.frames      = [];
+    this.frameIndex  = 0;
+    this.lastTime    = 0;
+    this.loadedCount = 0;
+
+    // Preload all frames
+    for (let i = 1; i <= this.data.frameCount; i++) {
+      const img = new Image();
+      const pad = String(i).padStart(4, '0'); 
+      img.src = `${this.data.path}${pad}.png`;
+      img.onload = () => { this.loadedCount++; };
+      this.frames.push(img);
+    }
+
+    this.el.addEventListener('loaded', () => this._applyMaterial());
+  },
+
+  _applyMaterial() {
+    const THREE = AFRAME.THREE;
+    const { repeat, normalScale, color } = this.data;
+
+    this.normalTex = new THREE.CanvasTexture(this.canvas);
+    this.normalTex.wrapS = this.normalTex.wrapT = THREE.RepeatWrapping;
+    this.normalTex.repeat.set(repeat.x, repeat.y);
+
+    const material = new THREE.MeshStandardMaterial({
+      color:       new THREE.Color(color),
+      normalMap:   this.normalTex,
+      normalScale: new THREE.Vector2(normalScale, normalScale),
+      roughness:   0.15,
+      metalness:   0.1,
+    });
+
+    const mesh = this.el.getObject3D('mesh');
+    if (mesh) mesh.material = material;
+  },
+
+  tick(time) {
+    if (this.loadedCount < this.data.frameCount) return;
+
+    const interval = 1000 / this.data.fps;
+    if (time - this.lastTime < interval) return;
+    this.lastTime = time;
+
+    const i = this.frameIndex;
+    this.ctx.drawImage(this.frames[i], 0, 0, this.canvas.width, this.canvas.height);
+    if (this.normalTex) this.normalTex.needsUpdate = true;
+
+    this.frameIndex = (i + 1) % this.data.frameCount;
+  }
+});
+
+  document.querySelector('#water').setAttribute('water-animation', {
+    frameCount:  120,
+    fps:         24,
+    path:        'assets/textures/water/',  // ← folder containing 0001.png … 0120.png
+    repeat:      '3 3',
+    normalScale: 2.0,
+    color:       '#006994'           // ← tweak this for your water color
+  });
+</script>
+
+<script>
+
+  // ── Audio globals ──────────────────────────────────
+  let audioCtx, analyser, source, dataArray, bufferLength;
+
+  // FFT bin boundaries (fftSize 2048 → 1024 bins at 44.1kHz ≈ 43Hz/bin)
+  const BASS_END   = 10;   // 0–430 Hz
+  const MID_END    = 100;  // 430Hz–4.3kHz
+  // 100–1023 = treble
+
+  // Smoothed band values (0–1)
+  let sBass = 0, sMid = 0, sTreble = 0;
+  const SMOOTH = 0.12; // gentle smoothing for dreamy feel
+
+  // Mote origin positions (populated on load)
+  const moteOrigins = [];
+
+
+  // ══════════════════════════════════════════════════
+  //  COMPONENT: camera-drift
+  //  Slow sinusoidal underwater body movement.
+  // ══════════════════════════════════════════════════
+  AFRAME.registerComponent('camera-drift', {
+    init: function () { this.t = 0; },
+    tick: function (time, delta) {
+      this.t += delta * 0.00025;
+      const t = this.t;
+      // Very slow, subtle — like being weightless in water
+      this.el.object3D.position.set(
+        Math.sin(t * 0.6)  * (0.12 + sBass * 0.08),
+        1.6 + Math.sin(t * 0.9) * 0.07,
+        Math.cos(t * 0.4)  * (0.08 + sBass * 0.06)
+      );
+    }
+  });
+
+
+  // ══════════════════════════════════════════════════
+  //  COMPONENT: coral-float
+  //  Per-coral idle floating animation.
+  //  schema: speed, amplitude, phase offset
+  // ══════════════════════════════════════════════════
+  AFRAME.registerComponent('coral-float', {
+    schema: {
+      speed:     { type: 'number', default: 0.4 },
+      amplitude: { type: 'number', default: 0.1 },
+      phase:     { type: 'number', default: 0   }
+    },
+    init: function () {
+      this.t = 0;
+      // Store the authored base Y position
+      this.baseY = this.el.object3D.position.y;
+    },
+    tick: function (time, delta) {
+      this.t += delta * 0.001;
+      const t = this.t;
+      const d = this.data;
+      // Float up and down
+      this.el.object3D.position.y =
+        this.baseY + Math.sin(t * d.speed + d.phase) * d.amplitude;
+      // Very slow yaw rotation
+      this.el.object3D.rotation.y += 0.0002 * d.speed;
+    }
+  });
+
+
+  // ══════════════════════════════════════════════════
+  //  COMPONENT: audio-reactor
+  //  Master tick — reads frequency data each frame,
+  //  drives corals, lights, caustics, and sediment.
+  // ══════════════════════════════════════════════════
+  AFRAME.registerComponent('audio-reactor', {
+    init: function () {
+      this.corals = [
+        document.querySelector('#coral-pocillopora'),
+        document.querySelector('#coral-diploria'),
+        document.querySelector('#coral-stylaster'),
+      ];
+      this.glows = [
+        document.querySelector('#glow-pocillopora'),
+        document.querySelector('#glow-diploria'),
+        document.querySelector('#glow-stylaster'),
+      ];
+      this.lMain   = document.querySelector('#light-main');
+      this.lSide   = document.querySelector('#light-side');
+      this.lBass   = document.querySelector('#light-bass');
+      this.lTreble = document.querySelector('#light-treble');
+
+      this.causticBack  = document.querySelector('#caustic-back');
+      this.causticLeft  = document.querySelector('#caustic-left');
+      this.causticRight = document.querySelector('#caustic-right');
+      this.causticFloor = document.querySelector('#caustic-floor');
+
+      this.motes = Array.from(document.querySelectorAll('.mote'));
+      this.motes.forEach(function(m, i) {
+        const p = m.getAttribute('position');
+        moteOrigins[i] = { x: p.x, y: p.y, z: p.z };
+      });
+
+      this.t = 0;
+    },
+
+    tick: function (time, delta) {
+      this.t += delta * 0.001;
+      const t = this.t;
+
+      // ── Band values (audio or demo) ───────────────
+      let rB, rM, rT;
+      if (analyser && dataArray) {
+        analyser.getByteFrequencyData(dataArray);
+        rB = avg(dataArray, 0,        BASS_END)     / 255;
+        rM = avg(dataArray, BASS_END,  MID_END)     / 255;
+        rT = avg(dataArray, MID_END,   bufferLength) / 255;
+      } else {
+        // Demo: slow, dreamlike sine waves
+        rB = 0.25 + 0.18 * Math.abs(Math.sin(t * 0.8));
+        rM = 0.20 + 0.15 * Math.abs(Math.sin(t * 0.6 + 1.2));
+        rT = 0.15 + 0.12 * Math.abs(Math.sin(t * 1.1 + 2.5));
+      }
+
+      // Lerp — gentle, dreamlike (not snappy)
+      sBass   += (rB - sBass)   * SMOOTH;
+      sMid    += (rM - sMid)    * SMOOTH;
+      sTreble += (rT - sTreble) * SMOOTH;
+
+      // ── CORALS: scale + glow opacity ─────────────
+      var bands = [sBass, sMid, sTreble];
+      for (var i = 0; i < this.corals.length; i++) {
+        var coral = this.corals[i];
+        var glow  = this.glows[i];
+        if (!coral) continue;
+
+        var n = bands[i];
+        // Scale: subtle pulse — 1.0 base, up to +35% on strong hit
+        var s = 1.0 + n * 0.35;
+        coral.object3D.scale.set(s, s, s);
+
+        // Glow sphere opacity: 0.08 to 0.35
+        if (glow) {
+          var op = (0.08 + n * 0.27).toFixed(3);
+          glow.setAttribute('material', 'opacity', op);
+        }
+      }
+
+      // ── LIGHTS: intensity modulation ─────────────
+      if (this.lMain)   this.lMain.setAttribute('intensity',   (1.2 + sBass * 1.2).toFixed(2));
+      if (this.lBass)   this.lBass.setAttribute('intensity',   (0.5 + sBass * 1.8).toFixed(2));
+      if (this.lTreble) this.lTreble.setAttribute('intensity', (0.3 + sTreble * 1.0).toFixed(2));
+      if (this.lSide)   this.lSide.setAttribute('intensity',   (0.7 + sMid   * 0.9).toFixed(2));
+
+      // ── CAUSTICS: opacity beat ─────────────────────
+      // Bass drives caustic intensity — adds to the CSS animation base
+      var cOp = (0.03 + sBass * 0.06).toFixed(3);
+      if (this.causticBack)  this.causticBack.setAttribute('material',  'opacity', cOp);
+      if (this.causticFloor) this.causticFloor.setAttribute('material', 'opacity', (parseFloat(cOp) * 0.7).toFixed(3));
+
+      // ── SEDIMENT: drift downward + lateral ───────
+      this.motes.forEach(function(mote, i) {
+        var o = moteOrigins[i];
+        if (!o) return;
+
+        var phase  = i * 0.7;
+        // Drift speed increases slightly with treble
+        var speed  = 0.04 + sTreble * 0.03;
+        // Lateral wobble
+        var wobble = 0.08 + sMid * 0.06;
+
+        // Y: drift downward, wrap back to top
+        var ny = o.y - (t * speed * 0.5 + phase * 0.15) % 3.5;
+        var nx = o.x + Math.sin(t * 0.3 + phase) * wobble;
+        var nz = o.z + Math.cos(t * 0.2 + phase) * wobble * 0.5;
+
+        mote.object3D.position.set(nx, ny, nz);
+      });
+    }
+  });
+
+  // Attach to scene on load
+  document.querySelector('a-scene').addEventListener('loaded', function () {
+    document.querySelector('a-scene').setAttribute('audio-reactor', '');
+  });
+
+
+  // ── Helper ────────────────────────────────────────
+  function avg(arr, start, end) {
+    var sum = 0;
+    for (var i = start; i < end; i++) sum += arr[i];
+    return sum / (end - start);
+  }
+
+
+  // ══════════════════════════════════════════════════
+  //  AUDIO LOADING — file stays local, nothing uploaded
+  // ══════════════════════════════════════════════════
+  function loadAudio() {
+    var input = document.createElement('input');
+    input.type   = 'file';
+    input.accept = 'audio/*';
+
+    input.onchange = async function (e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      document.getElementById('status').textContent = 'decoding…';
+
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } else if (audioCtx.state === 'suspended') {
+          await audioCtx.resume();
+        }
+
+        if (source) { try { source.stop(); } catch(err) {} }
+
+        analyser         = audioCtx.createAnalyser();
+        analyser.fftSize = 2048;
+        bufferLength     = analyser.frequencyBinCount;
+        dataArray        = new Uint8Array(bufferLength);
+
+        var ab  = await file.arrayBuffer();
+        var buf = await audioCtx.decodeAudioData(ab);
+
+        source        = audioCtx.createBufferSource();
+        source.buffer = buf;
+        source.loop   = true;
+        source.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        source.start(0);
+
+        document.getElementById('status').textContent = '▶ ' + file.name;
+        document.getElementById('load-btn').textContent = '⊕ Change Track';
+
+      } catch (err) {
+        console.error('Audio error:', err);
+        document.getElementById('status').textContent = 'error — see console';
+      }
+    };
+
+    input.click();
+  }
+</script>
+</body>
+</html>
