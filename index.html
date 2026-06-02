@@ -23,18 +23,21 @@
 -->
       <!-- linear = much more dark -->
 
-      <!-- Assets -->
+      <!-- Assets 
       <a-assets>
         <audio src="assets/audio/no_lum.ogg" autoplay="true"
     volume="5"
     loop="true"
     ></audio>
-      </a-assets> 
+      </a-assets> -->
 
-
-    
+      <a-assets>
+  <audio id="my-sound" src="assets/audio/no_lum.ogg"
    
-  
+    crossorigin="anonymous"></audio>
+</a-assets>
+
+<a-sound src="#my-sound" autoplay="true" loop="true  volume="5"></a-sound>
 
       <a-assets>
         <img
