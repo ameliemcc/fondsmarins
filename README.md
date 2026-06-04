@@ -22,28 +22,27 @@ Ce projet utilise A-Frame.
 
 ## Droits, licences et sources
 
-### Modèles 3D
-Les spécimens de coraux proviennent de la Smithsonian Institution et sont publiés sous licence CC0 (domaine public) :
-
-- *Pocillopora grandis* (Dana, 1846) — USNM 700
-  [Sketchfab](https://sketchfab.com/3d-models/pocillopora-grandis-ec6c9d4d94ba4d4ea68e34bc99ce5131)
-- *Diploria labyrinthiformis* (Linnaeus, 1758) — USNM 74947
-  [Sketchfab](https://sketchfab.com/3d-models/diploria-labyrinthiformis-cbbf64f211f84a7cb62887fec11f54fe)
-- *Stylaster sanguineus* (Valenciennes, 1850) — USNM 76600
-  [Sketchfab](https://sketchfab.com/3d-models/stylaster-sanguineus-detail-view-2aa2135dda844cc399028becc7a7c825)
-
-### Textures
-- Texture animée de surface d'eau (normal map, 120 frames) —
-  [pixel-furnace.com](https://textures.pixel-furnace.com)
-- *Old Rocks* 
-- *Liquid Brown* 
-
 ### Audio
-La musique a été composée par l'artiste Lait et Sucre spécialement pour ce projet. Je l'en remercie chaleureusement <3.
+La musique a été généreusement composée par l'artiste Lait et Sucre spécialement pour ce projet.
 [Lait Et Sucre sur Spotify](https://open.spotify.com/intl-fr/artist/2IBCUWRn1Al2v8tWv1US76?si=Vyf6eO8mSvyoiP00kLpObQ), [Lait Et Sukr sur SoundCloud](https://soundcloud.com/laitetsukrmusic?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing
 )
 
+### Modèles 3D
+- "Knitting Yarn Basket" (https://skfb.ly/oMAp7) by furkankay1991 is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+- ["Lost Car Keys (TLOU inspired)"](https://skfb.ly/6TyUS) by DC_knights is licensed under Creative Commons Attribution.
+- ["Beeld Victoria | statue Victoria (70-250 AD)"](https://skfb.ly/pwA7G) by Archeologiemuseum Huis van Hilde is licensed under Creative Commons Attribution.
 
+Les spécimens de coraux proviennent de la Smithsonian Institution et sont publiés sous licence CC0 (domaine public) :
+- [*Pocillopora grandis*](https://sketchfab.com/3d-models/pocillopora-grandis-ec6c9d4d94ba4d4ea68e34bc99ce5131)
+- [*Diploria labyrinthiformis*](https://sketchfab.com/3d-models/diploria-labyrinthiformis-cbbf64f211f84a7cb62887fec11f54fe)
+- [*Stylaster sanguineus 1*](https://sketchfab.com/3d-models/stylaster-sanguineus-detail-view-2aa2135dda844cc399028becc7a7c825), [*Stylaster sanguineus 2*](https://sketchfab.com/3d-models/stylaster-sanguineus-4f1ddd8352944d16bf3b821b3e71b473)
+- [*Tridacna (Flodacna) squamosa*](https://sketchfab.com/3d-models/tridacna-flodacna-squamosa-4f08856d40e14a9780a7f7714a4ff5a7)
+- [*Pocillopora damicornis caespitosa*](https://sketchfab.com/3d-models/pocillopora-damicornis-caespitosa-662c5b9144334e678b871f1960c03392)
+
+### Textures
+- ["Animated water"](https://textures.pixel-furnace.com/texture?name=Animated%20Water) by Pixel-Furnace is free to use for non-commercial and commercial projects.
+- ["Old Rocks"](https://textures.pixel-furnace.com/texture?name=Old%20Rocks) by Pixel-Furnace is free to use for non-commercial and commercial projects.
+- ["Liquid Brown"](https://opengameart.org/content/140-liquid-textures) by Screaming Brain Studios is free to use.
 
 
 
