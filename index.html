@@ -2,134 +2,190 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>fondsMarins</title>
+    <title>TheFurthestShore</title>
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
   </head>
   <body>
-
-
- <!-- enter button
-<div id="start-screen" style="
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: #060e0a;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  cursor: pointer;
-  font-family: 'Courier New', monospace;
-  color: #a8d5b5;
-">
-
- <p style="font-size: 1rem; letter-spacing: 0.2em; text-transform: uppercase;">
-    cliquer pour entrer
+    <div id="start-screen" style="
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #060e0a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      font-family: 'Courier New', monospace;
+      color: #a8d5b5;
+      text-align: center;
+      padding: 2rem;
+      box-sizing: border-box;
+    ">
+    <p style="
+      font-size: 0.85rem;
+      line-height: 2;
+      letter-spacing: 0.12em;
+      max-width: 480px;
+      opacity: 0.7;
+      font-style: italic;
+      margin-bottom: 3rem;
+    ">
+    « There is no safety, and there is no end. The word must be heard in silence; 
+    there must be darkness to see the stars. The dance is always danced above the 
+    hollow place, above the terrible abyss. »
+    <br><br>
+    <span style="font-size: 0.7rem; letter-spacing: 0.2em; font-style: normal;">
+      — Ursula K. Le Guin, <span style="font-style: italic;">The Furthest Shore</span>, 1972.
+    </span>
   </p>
 
-  
+<div id="enter-btn" onclick="enterScene()" style="
+    opacity: 0;
+    cursor: pointer;
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(168, 213, 181, 0.3);
+    padding-bottom: 2px;
+    transition: opacity 0.3s;
+  "
+  onmouseover="this.style.opacity='1'"
+  onmouseout="this.style.opacity='0.6'">
+    enter ?
+  </div>
 </div>
--->
-<!-- enter button 
+
 <script>
-  document.getElementById('start-screen').addEventListener('click', function() {
-    // Resume audio context
-    if (AFRAME.scenes[0].audioListener) {
-      AFRAME.scenes[0].audioListener.context.resume();
-    }
-    // Hide the start screen
-    this.style.display = 'none';
-  });
+
 </script>
--->
 
-  <a-scene fog="type: exponential; color: #14372E; density: 0.2" background="color: #14372E">
+    <a-scene
+      fog="type: exponential; color: #14372E; density: 0.2"
+      background="color: #14372E"
+    >
+      <!-- Camera  -->
+      <a-camera
+        position="0 1.5 0"
+        wasd-controls="acceleration: 12;fly: true"
+        clamp-to-room
+        >
+      </a-camera>
+      <!--Lighting-->
+      <a-light
+        type="point"
+        color="#1a6b4a"
+        intensity="3"
+        distance="12"
+        position="0 7 -3"
+      ></a-light>
+      <a-light
+        type="point"
+        color="#2dcc7a"
+        intensity="2"
+        distance="10"
+        position="2 7 -5"
+      ></a-light>
+      <a-light type="ambient" color="#8AB0A7" intensity="2"></a-light>
 
-    <!--Lighting-->
-    <a-light type="point" color="#1a6b4a" intensity="3" distance="12" position="0 7 -3"></a-light>
-    <a-light type="point" color="#2dcc7a" intensity="2" distance="10" position="2 7 -5"></a-light>
-    <a-light type="ambient" color="#8AB0A7" intensity="2"></a-light>
-    
-    <!-- Assets -->
-    <a-assets>
-      <!-- Sound -->
-      <audio id="no_lum" src="assets/audio/no_lum.ogg" crossorigin="anonymous"></audio>
-      <audio id="lum" src="assets/audio/lum.ogg" crossorigin="anonymous"></audio>
+      <!-- Assets -->
+      <a-assets>
+        <!-- Sound -->
+        <audio
+          id="no_lum"
+          src="assets/audio/no_lum.ogg"
+          crossorigin="anonymous"
+        ></audio>
+        <audio
+          id="lum"
+          src="assets/audio/lum.ogg"
+          crossorigin="anonymous"
+        ></audio>
 
-      <!-- Glb models -->
-      <a-asset-item id="pocillopora" src="assets/corals/pocillopora.glb"></a-asset-item>
-      <a-asset-item id="diploria" src="assets/corals/diploria.glb"></a-asset-item>
-      <a-asset-item id="stylaster" src="assets/corals/stylaster.glb"></a-asset-item>
-      <a-asset-item id="tridacna" src="assets/shell/tridacna.glb"></a-asset-item>
-      <a-asset-item id="panulirus" src="assets/corals/panulirus.glb"></a-asset-item>
-      <a-asset-item id="pocillopora2" src="assets/corals/pocillopora2.glb"></a-asset-item>
-      <a-asset-item id="stylaster2" src="assets/corals/stylaster2.glb"></a-asset-item>
-      <a-asset-item id="smallkeys" src="assets/objects/smallkeys.glb"></a-asset-item>
-    
-      <!-- Textures-->
-      <img id="rocks-albedo" src="assets/textures/rocks/Old_Rocks_ALBEDO.png"/>
-      <img id="rocks-normal" src="assets/textures/rocks/Old_Rocks_NRM.png" />
-      <img id="rocks-occ" src="assets/textures/rocks/Old_Rocks_OCC.png" />
-      
-      <img id="coral-texture" src="assets/textures/liquids/purple.png">
+        <!-- Glb models -->
+        <a-asset-item
+          id="pocillopora"
+          src="assets/corals/pocillopora.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="diploria"
+          src="assets/corals/diploria.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="stylaster"
+          src="assets/corals/stylaster.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="tridacna"
+          src="assets/shell/tridacna.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="panulirus"
+          src="assets/corals/panulirus.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="pocillopora2"
+          src="assets/corals/pocillopora2.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="stylaster2"
+          src="assets/corals/stylaster2.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="smallkeys"
+          src="assets/objects/smallkeys.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="statue"
+          src="assets/objects/statue.glb"
+        ></a-asset-item>
 
-      <img id="mud-albedo" src="assets/textures/liquids/brown/Liquid_Brown_albedo.png"/>
-      <img id="mud-normal" src="assets/textures/liquids/brown/Liquid_Brown_normal.png"/>
-      <img id="mud-ambient" src="assets/textures/liquids/brown/Liquid_Brown_ambient.png"/>
+        <!-- Textures-->
+        <img
+          id="rocks-albedo"
+          src="assets/textures/rocks/Old_Rocks_ALBEDO.png"
+        />
+        <img id="rocks-normal" src="assets/textures/rocks/Old_Rocks_NRM.png" />
+        <img id="rocks-occ" src="assets/textures/rocks/Old_Rocks_OCC.png" />
 
-      <img id="grass" src="assets/textures/grass/Grass_02.png" />
-      <img id="grass-normal" src="assets/textures/grass/Grass_02_Nrm.png"/>
+        <img
+          id="mud-albedo"
+          src="assets/textures/liquids/brown/Liquid_Brown_albedo.png"
+        />
+        <img
+          id="mud-normal"
+          src="assets/textures/liquids/brown/Liquid_Brown_normal.png"
+        />
+        <img
+          id="mud-ambient"
+          src="assets/textures/liquids/brown/Liquid_Brown_ambient.png"
+        />
 
-      <img id="purple" src="assets/textures/liquids/purple.png" />
+        <img id="grass" src="assets/textures/grass/Grass_02.png" />
+        <img id="grass-normal" src="assets/textures/grass/Grass_02_Nrm.png" />
 
-    
-    </a-assets>
+        <img id="purple" src="assets/textures/liquids/purple.png" />
+      </a-assets>
 
+      <!-- Scene music -->
+      <a-sound src="#no_lum" autoplay="true" loop="true" volume="1"> </a-sound>
 
-<!-- Scene music -->
-<a-sound src="#no_lum" autoplay="true" loop="true volume="1"></a-sound>
-
-
-      <!-- rock bottom
- <a-plane
-  rotation="-90 0 0"
-  width="20" height="28"
-  material="
-    src: #rocks-albedo;
-    normalMap: #rocks-normal;
-    ambientOcclusionMap: #rocks-occ;
-    repeat: 4 6;
-    roughness: 0.9;
-    metalness: 0.0;
-  ">
-</a-plane>
--->
-
-      <!-- mud bottom-->
+      <!-- rock bottom-->
       <a-plane
         src="#ground"
         rotation="-90 0 0"
         width="40"
-        height="42"
+        height="56"
         material="
-    src: #mud-albedo;
-    normalMap: #mud-normal;
-    ambientOcclusionMap: #mud-ambient;
-    repeat: 4 6;
-    roughness: 0.9;
-    metalness: 0.0;
-  "
+          src: #rocks-albedo;
+          normalMap: #rocks-normal;
+          ambientOcclusionMap: #rocks-occ;
+          repeat: 4 6;
+          roughness: 0.9;
+          metalness: 0.0;
+        "
       >
       </a-plane>
-
-
-      <!-- Floor
-  <a-plane
-    rotation="-90 0 0"
-    width="10" height="14"
-    color="#060f08">
-  </a-plane> -->
 
       <!-- Surrounding rock cave cylinder -->
       <a-cylinder
@@ -139,12 +195,12 @@
         open-ended="true"
         side="back"
         material="
-    src: #purple;
-    normalMap: #grass-normal;
-    repeat: 6 2;
-    roughness: 1.0;
-    metalness: 0.0;
-  "
+          src: #purple;
+          normalMap: #grass-normal;
+          repeat: 6 2;
+          roughness: 1.0;
+          metalness: 0.0;
+        "
       >
       </a-cylinder>
 
@@ -161,78 +217,96 @@
       >
       </a-plane>
 
+      <!-- Objects / corals on the ground, by zone -->
 
-      <!-- Coral models          animation="property: object3D.position.y; to: 2.0; dir: alternate; dur: 2500; loop: true"
--->
-  
-  
-
-  
-
-<!-- zone 1 -->
+      <!-- zone 1 -->
       <a-gltf-model
         src="#stylaster"
         position="0 2 3"
         scale="150 150 150"
+        animation="property: object3D.position.y; to: 2.1; dir: alternate; dur: 3000; loop: true"
       >
       </a-gltf-model>
-       <a-gltf-model
+
+      <a-gltf-model
         src="#stylaster2"
         position="5 4 4"
         scale="50 50 50"
         rotation="0 90 0"
+        animation="property: object3D.position.y; to: 3.8; dir: alternate; dur: 3200; loop: true"
       >
       </a-gltf-model>
-       <a-gltf-model
+
+      <a-gltf-model
         src="#stylaster2"
         position="5 4 4"
         scale="50 50 50"
         rotation="0 180 0"
+        animation="property: object3D.position.y; to: 3.8; dir: alternate; dur: 3200; loop: true"
       >
       </a-gltf-model>
-      
- <!-- zone 2 -->
-    <a-gltf-model
+
+      <!-- zone 2 -->
+      <a-gltf-model
         src="#pocillopora2"
         position="-7 2 -11.5"
-        scale="30 30 30">
+        scale="30 30 30"
+        animation="property: object3D.position.y; to: 1.8; dir: alternate; dur: 4000; loop: true"
+      >
       </a-gltf-model>
-  <a-gltf-model
+
+      <a-gltf-model
         src="#pocillopora2"
         position="-6 0.2 2"
         rotation="0 180 0"
-        scale="10 10 10">
+        scale="10 10 10"
+        animation="property: object3D.position.y; to: 0.1; dir: alternate; dur: 3200; loop: true"
+      >
       </a-gltf-model>
 
- <!-- diploria cluster-->
+      <a-gltf-model
+        src="#statue"
+        position="-4 0.7 2"
+        rotation="0 160 10"
+        scale="0.3 0.3 0.3"
+      >
+      </a-gltf-model>
+
+
+      <!-- diploria cluster-->
       <a-gltf-model
         src="#diploria"
         position="-10 1.5 -5.5"
         scale="60 60 60"
-        animation="property: object3D.position.y; to: 1.7; dir: alternate; dur: 3200; loop: true"
+        animation="property: object3D.position.y; to: 1.6; dir: alternate; dur: 3000; loop: true"
       >
       </a-gltf-model>
-       <a-gltf-model
+      <a-gltf-model
         src="#diploria"
         position="-9 0.5 0"
         rotation="0 30 0"
-        scale="30 30 30">
+        scale="30 30 30"
+        animation="property: object3D.position.y; to: 0.3; dir: alternate; dur: 4000; loop: true"
+      >
       </a-gltf-model>
 
-       <a-gltf-model
+      <a-gltf-model
         src="#diploria"
         position="-7 0.5 -2"
         rotation="0 60 0"
-        scale="20 20 20">
+        scale="20 20 20"
+        animation="property: object3D.position.y; to: 0.6; dir: alternate; dur: 3200; loop: true"
+      >
       </a-gltf-model>
 
-  <!-- zone 3 -->
+      <!-- zone 3 -->
 
-   <a-gltf-model
+      <a-gltf-model
         src="#stylaster"
         position="-2 1.8 -15"
         scale="300 300 300"
         rotation="0 180 0"
+        animation="property: object3D.position.y; to: 1.6; dir: alternate; dur: 3000; loop: true"
       >
       </a-gltf-model>
       <a-gltf-model
@@ -240,70 +314,72 @@
         position="3 4 -13"
         scale="50 50 50"
         rotation="0 110 0"
+        animation="property: object3D.position.y; to: 3.8; dir: alternate; dur: 3200; loop: true"
       >
       </a-gltf-model>
-       <a-gltf-model
+      <a-gltf-model
         src="#stylaster2"
         position="3 4 -13"
         scale="50 50 50"
         rotation="0 200 0"
+        animation="property: object3D.position.y; to: 3.8; dir: alternate; dur: 3200; loop: true"
       >
       </a-gltf-model>
-       <a-gltf-model
+      <a-gltf-model
         src="#pocillopora"
         position="7 0.5 -12"
         scale="15 15 15 "
+        animation="property: object3D.position.y; to: 0.35; dir: alternate; dur: 4000; loop: true"
       >
       </a-gltf-model>
-   <!-- zone 4 -->
+      <!-- zone 4 -->
 
-    <a-gltf-model
+      <a-gltf-model
         src="#pocillopora"
         position="0 0.5 -4.5"
         scale="15 15 15 "
+        animation="property: object3D.position.y; to: 0.2; dir: alternate; dur: 4000; loop: true"
       >
       </a-gltf-model>
 
-       <a-gltf-model
+      <a-gltf-model
         src="#stylaster"
         position="3 1.8 -5"
         scale="100 100 100"
         rotation="0 90 0"
+        animation="property: object3D.position.y; to: 1.6; dir: alternate; dur: 4000; loop: true"
       >
       </a-gltf-model>
-    <!-- zone 5 -->
-       <a-gltf-model
+      <!-- zone 5 -->
+      <a-gltf-model
         src="#smallkeys"
         position="1 0.04 -2"
         scale="0.008 0.008 0.008"
       >
       </a-gltf-model>
 
-<a-gltf-model
-  src="#stylaster"
+      <a-gltf-model
+        src="#stylaster"
         position="5 1.8 -2.0"
         scale="200 200 200"
         rotation="0 210 0 "
-  apply-texture="src: #coral-texture">
-</a-gltf-model>
-
+        animation="property: object3D.position.y; to: 1.5; dir: alternate; dur: 3500; loop: true"
+      >
+      </a-gltf-model>
 
       <a-gltf-model
         src="#stylaster2"
         position="4 3 -7.0"
         scale="40 40 40"
         rotation="0 90 0"
-        animation="property: object3D.position.y; to: 3; dir: alternate; dur: 2000; loop: true"
+        animation="property: object3D.position.y; to:2.8; dir: alternate; dur: 2000; loop: true"
       >
       </a-gltf-model>
-      
-
-
 
       <!--luminous shell -->
       <a-gltf-model
         src="#tridacna"
-        position="-2 0.2 -7"
+        position="-2 0.2 -8.5"
         rotation="150 0 0"
         scale="2 2 2 "
         animation="property: rotation; to: 140 0 0; dur: 3000; dir: alternate;  loop: true"
@@ -312,7 +388,7 @@
 
       <a-gltf-model
         src="#tridacna"
-        position="-2 0.35 -7"
+        position="-2 0.35 -8.5"
         rotation="200 0 180"
         scale="2 2 2 "
         animation="property: rotation; to: 210 0 180; dur: 3000; dir: alternate;  loop: true"
@@ -320,11 +396,10 @@
       </a-gltf-model>
 
       <!--Pearl-->
-      <a-entity position="-2 0.3 -7">
-
+      <a-entity position="-2 0.3 -8.5">
         <a-sphere
           radius="0.05"
-          material="
+          material="        
       color: #FFFFFF;
       emissive: #c8b8e8;
       emissiveIntensity: 0.5;
@@ -333,16 +408,17 @@
       shader: standard;"
         >
         </a-sphere>
-         <a-sound
-    src="#lum"
-    autoplay="true"
-    volume="3"
-    loop="true"
-    positional="true"
-    rolloff-factor="8"
-    max-distance="5"
-    ref-distance="1">
-  </a-sound>
+        <a-sound
+          src="#lum"
+          autoplay="true"
+          volume="3"
+          loop="true"
+          positional="true"
+          rolloff-factor="8"
+          max-distance="5"
+          ref-distance="1"
+        >
+        </a-sound>
 
         <a-light
           type="point"
@@ -353,50 +429,40 @@
         >
         </a-light>
       </a-entity>
-
-      <!-- Camera  -->
-      <a-camera position="0 1 0" wasd-controls="acceleration: 12;fly: true" clamp-to-room >
-      </a-camera>
-
-
-
     </a-scene>
 
-
     <script>
-
       // Apply texture to a model
-      AFRAME.registerComponent('apply-texture', {
-
+      AFRAME.registerComponent("apply-texture", {
         schema: {
-          src: { type: 'selector' }
+          src: { type: "selector" },
         },
 
         init() {
-          this.el.addEventListener('model-loaded', () => {
+          this.el.addEventListener("model-loaded", () => {
             const texture = new AFRAME.THREE.TextureLoader().load(
-              this.data.src.src
+              this.data.src.src,
             );
             texture.wrapS = texture.wrapT = AFRAME.THREE.RepeatWrapping;
             texture.repeat.set(2, 2);
 
-            const obj = this.el.getObject3D('mesh');
-            obj.traverse(node => {
+            const obj = this.el.getObject3D("mesh");
+            obj.traverse((node) => {
               if (node.isMesh) {
                 node.material.map = texture;
                 node.material.needsUpdate = true;
               }
             });
           });
-        }
+        },
       });
-      
+
       // Define room boundaries, where the user may move within
       AFRAME.registerComponent("clamp-to-room", {
         schema: {
           minX: { type: "number", default: -4 },
           maxX: { type: "number", default: 4 },
-          minY: { type: "number", default: 0.5 },
+          minY: { type: "number", default: 1 },
           maxY: { type: "number", default: 7 },
           minZ: { type: "number", default: -8 },
           maxZ: { type: "number", default: 0 },
@@ -410,7 +476,7 @@
         },
       });
 
-      // Make water ceiling move 
+      // Make water ceiling move
       AFRAME.registerComponent("water-animation", {
         schema: {
           frameCount: { type: "int", default: 120 },
@@ -493,8 +559,24 @@
         path: "assets/textures/water/",
         repeat: "3 3",
         normalScale: 2.0,
-        color: "#006994", 
+        color: "#006994",
       });
+
+      setTimeout(() => {
+  const btn = document.getElementById('enter-btn');
+  btn.style.transition = 'opacity 2s ease';
+  btn.style.opacity = '0.6';
+}, 6000);
+
+  function enterScene() {
+    if (AFRAME.scenes[0].audioListener) {
+      AFRAME.scenes[0].audioListener.context.resume();
+    }
+    const screen = document.getElementById('start-screen');
+    screen.style.transition = 'opacity 2s ease';
+    screen.style.opacity = '0';
+    setTimeout(() => screen.style.display = 'none', 2000);
+  }
     </script>
   </body>
 </html>
