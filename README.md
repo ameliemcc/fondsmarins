@@ -45,6 +45,10 @@ Les spécimens de coraux proviennent de la Smithsonian Institution et sont publi
 - ["Liquid Brown"](https://opengameart.org/content/140-liquid-textures) by Screaming Brain Studios is free to use.
 
 
+## Recours au LLM
+Claude AI (Sonnet 4.6) a été utilisé pour générer une partie du code ayant permi l'animation de la surface de l'eau. [Prompt](https://claude.ai/share/743ccf97-43f0-4e4e-82ee-64a21db258ae)
 
+## Contexte de développement
+Ce projet a été développé dans le cadre du cours *Réalité virtuelle et augmentée* dispensé par Isaac Pante (SLI, Lettres, UNIL)).
 
 
