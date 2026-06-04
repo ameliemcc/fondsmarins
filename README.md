@@ -28,7 +28,6 @@ La musique a été généreusement composée par l'artiste Lait et Sucre spécia
 )
 
 ### Modèles 3D
-- "Knitting Yarn Basket" (https://skfb.ly/oMAp7) by furkankay1991 is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 - ["Lost Car Keys (TLOU inspired)"](https://skfb.ly/6TyUS) by DC_knights is licensed under Creative Commons Attribution.
 - ["Beeld Victoria | statue Victoria (70-250 AD)"](https://skfb.ly/pwA7G) by Archeologiemuseum Huis van Hilde is licensed under Creative Commons Attribution.
 
