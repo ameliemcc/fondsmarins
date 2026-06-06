@@ -1,16 +1,19 @@
-# Fondsmarins
+# The hollow place
 
 ## Description
-Fondsmarins est une expérience de réalité virutelle développée avec A-frame. Elle propose de s'immerger dans l'eau, pour rejoindre des coraux jonchant un fond marin traversé d'une enveloppante musique. Guidé par une mélodie se distinguant du paysage sonore, l'utilisateur.ice est guidé.e parmi les coraux jusqu'à atteindre un objet luminescent. Sur sa route, iel croisera peut-être la route d'objets épars et égarés.
+*The hollow place* est une expérience de réalité virutelle développée avec A-frame. Elle propose de s'immerger dans l'eau, pour rejoindre des coraux jonchant un fond marin traversé d'une enveloppante musique. Guidé par une mélodie se distinguant du paysage sonore, l'utilisateur.ice est guidé.e parmi les coraux jusqu'à atteindre un objet luminescent. Sur sa route, iel croisera peut-être la route d'objets épars et égarés.
+Le titre de l'expérience est basé sur une passage du roman d'Ursula K. Le Guin, *The Farthest Shore* (1972), troisième volume du Cycle de Terremer.
 
 **Fonctionnalités :**
-- Navigation libre dans un espace délimité
-- Réaction audio spatiale : le son de la perle s'intensifie à son approche
+- Réaction audio spatiale immersive : le son de la perle s'intensifie à son approche
 - Légers mouvements des coraux
 - Texture animée à la surface de l'eau
 - Écran de chargement avant l'entrée dans la scène
 
--- add gif 
+### Aperçu de la scène
+![Coquillage sonore](https://github.com/ameliemcc/fondsmarins/blob/main/GIFs/shell.gif)
+![Statue d'ange](https://github.com/ameliemcc/fondsmarins/blob/main/GIFs/statue.gif)
+![Surface de l'eau](https://github.com/ameliemcc/fondsmarins/blob/main/GIFs/surface.gif)
 
 ## Installation
 Télécharger le dépot et ouvrir `index.html` avec un serveur local (Live Server pour VScode par exemple).
