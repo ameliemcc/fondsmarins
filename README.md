@@ -5,9 +5,9 @@ Fondsmarins est une expérience de réalité virutelle développée avec A-frame
 
 **Fonctionnalités :**
 - Navigation libre dans un espace délimité
-- Texture animée à la surface de l'eau
 - Réaction audio spatiale : le son de la perle s'intensifie à son approche
-- Particules bioluminescentes flottantes
+- Légers mouvements des coraux
+- Texture animée à la surface de l'eau
 - Écran de chargement avant l'entrée dans la scène
 
 -- add gif 
@@ -39,9 +39,9 @@ Les spécimens de coraux proviennent de la Smithsonian Institution et sont publi
 - [*Pocillopora damicornis caespitosa*](https://sketchfab.com/3d-models/pocillopora-damicornis-caespitosa-662c5b9144334e678b871f1960c03392)
 
 ### Textures
-- ["Animated water"](https://textures.pixel-furnace.com/texture?name=Animated%20Water) by Pixel-Furnace is free to use for non-commercial and commercial projects.
-- ["Old Rocks"](https://textures.pixel-furnace.com/texture?name=Old%20Rocks) by Pixel-Furnace is free to use for non-commercial and commercial projects.
-- ["Liquid Brown"](https://opengameart.org/content/140-liquid-textures) by Screaming Brain Studios is free to use.
+- ["Animated water"](https://textures.pixel-furnace.com/texture?name=Animated%20Water) par Pixel-Furnace est libre d'utilisation pour des projets non-commerciaux et commerciaux.
+- ["Old Rocks"](https://textures.pixel-furnace.com/texture?name=Old%20Rocks) par Pixel-Furnace est libre d'utilisation pour des projets non-commerciaux et commerciaux.
+- ["Liquid Brown"](https://opengameart.org/content/140-liquid-textures) par Screaming Brain Studios est libre d'utilisation
 
 
 ## Recours au LLM
